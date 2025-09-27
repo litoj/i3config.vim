@@ -118,7 +118,7 @@ syn match swayConfigSeatIdent /[^ ]\+/ contained contains=i3ConfigOutputIdent sk
 syn keyword i3ConfigKeyword seat contained skipwhite nextgroup=swayConfigSeatIdent
 
 " Output monitors
-syn keyword swayConfigOutputOpts mode resolution res modeline position pos scale scale_filter subpixel transform disable enable power dpms max_render_time adaptive_sync render_bit_depth contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue,swayConfigOutputMode
+syn keyword swayConfigOutputOpts mode resolution res modeline position pos scale scale_filter subpixel transform disable enable toggle power dpms max_render_time adaptive_sync render_bit_depth contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue,swayConfigOutputMode
 syn keyword swayConfigOutputOptVals linear nearest smart rgb bgr vrgb vbgr none clockwise anticlockwise toggle contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue
 syn keyword swayConfigOutputBgVals solid_color fill stretch fit center tile contained skipwhite nextgroup=@i3ConfigColVar
 syn match swayConfigOutputBg /[#$]\S\+ solid_color/ contained contains=@i3ConfigColVar,swayConfigOutputBgVals
@@ -132,6 +132,7 @@ syn region swayConfigOutput start=/\s/ skip=/\\$/ end=/\ze[,;]\|$/ contained con
 syn region swayConfigOutput matchgroup=i3ConfigParen start=/ {$/ end=/^\s*}$/ contained contains=swayConfigOutputOpts,@i3ConfigValue,i3ConfigComment keepend extend
 syn match swayConfigOutputIdent /[^ ]\+/ contained contains=i3ConfigOutputIdent skipwhite nextgroup=swayConfigOutput
 syn keyword i3ConfigKeyword output contained skipwhite nextgroup=swayConfigOutputIdent
+syn keyword i3ConfigActionKeyword output contained skipwhite nextgroup=swayConfigOutputIdent
 
 " Define the highlighting.
 hi def link swayConfigFloatingModifierOpts   i3ConfigOption

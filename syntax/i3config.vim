@@ -120,7 +120,7 @@ syn region i3ConfigKeyword start=/assign / end=/$/ contained contains=i3ConfigAs
 syn region i3ConfigShCommand matchgroup=i3ConfigShDelim start=/\$(/ end=/)/ contained contains=i3ConfigExecAction,i3ConfigShCommand,i3ConfigShDelim,i3ConfigShOper,i3ConfigShParam,i3ConfigString,i3ConfigNumber,i3ConfigVariable extend
 syn match  i3ConfigShDelim /[[\]{}();`]\+/ contained
 syn match  i3ConfigShOper /[<>&|+=~^*!.?]\+/ contained
-syn match i3ConfigShParam /\<-[A-Za-z-][0-9A-Za-z_-]*\>/ contained
+syn match i3ConfigShParam /\s\zs-[A-Za-z-][0-9A-Za-z_-]*\>/ contained
 syn cluster i3ConfigSh contains=@i3ConfigIdent,i3ConfigShOper,i3ConfigShDelim,i3ConfigShParam,i3ConfigShCommand
 syn region i3ConfigExec start=/ \ze[^{]/ skip=/\\$/ end=/$/ contained contains=i3ConfigExecAction,@i3ConfigSh keepend
 syn keyword i3ConfigKeyword exec_always exec contained nextgroup=i3ConfigExec
