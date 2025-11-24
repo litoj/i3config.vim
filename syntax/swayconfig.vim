@@ -1,9 +1,9 @@
 " Vim syntax file
 " Language: sway config file
-" Original Author: Josef Litos (JosefLitos/i3config.vim)
+" Original Author: Josef Litos (litoj/i3config.vim)
 " Maintainer: James Eapen <james.eapen@vai.org>
-" Version: 1.2.4
-" Last Change: 2024-05-24
+" Version: 1.2.6
+" Last Change: 2025 Nov 24
 
 " References:
 " http://i3wm.org/docs/userguide.html#configuring
@@ -20,6 +20,9 @@ endif
 syn cluster i3ConfigCommand contains=i3ConfigCommand,i3ConfigAction,i3ConfigActionKeyword,@i3ConfigValue,i3ConfigColor,i3ConfigKeyword
 
 runtime! syntax/i3config.vim
+
+" In sway, popup_during_fullscreen does not have options like all option.
+syn cluster i3ConfigPopupFullscreenOpts remove=i3ConfigPopupFullscreenExtra
 
 " Sway extensions to i3
 syn keyword i3ConfigActionKeyword opacity urgent shortcuts_inhibitor splitv splith splitt contained contained skipwhite nextgroup=i3ConfigOption
@@ -60,6 +63,13 @@ syn keyword i3ConfigKeyword xwayland contained skipwhite nextgroup=swayConfigXOp
 syn keyword swayConfigInhibitOpts focus fullscreen open none visible contained
 syn keyword i3ConfigActionKeyword inhibit_idle contained skipwhite nextgroup=swayConfigInhibitOpts
 
+" Primary selection
+syn keyword i3ConfigKeyword primary_selection contained skipwhite nextgroup=i3ConfigBoolean
+
+" Swaybg command
+" Swaynag command
+syn keyword i3ConfigKeyword swaybg_command swaynag_command contained nextgroup=i3ConfigExec
+
 " Bindswitch
 syn match swayConfigBindswitchArgument /--\(locked\|no-warn\|reload\) / contained nextgroup=swayConfigBindswitchArgument,swayConfigBindswitchType
 syn keyword swayConfigBindswitchType lid tablet contained nextgroup=swayConfigBindswitchCombo
@@ -88,7 +98,7 @@ syn match i3ConfigKeyword /titlebar_padding \(\d\+\|\$\S\+\)\( \d\+\)\?$/ contai
 syn match swayConfigDeviceOper /[*:;!]/ contained
 
 " Input devices
-syn keyword swayConfigInputOpts xkb_variant xkb_rules xkb_switch_layout xkb_numlock xkb_file xkb_capslock xkb_model repeat_delay repeat_rate map_to_output map_to_region map_from_region tool_mode accel_profile dwt dwtp drag_lock drag click_method middle_emulation tap events calibration_matrix natural_scroll left_handed pointer_accel scroll_button scroll_factor scroll_method tap_button_map contained skipwhite nextgroup=swayConfigInputOptVals,@i3ConfigValue
+syn keyword swayConfigInputOpts xkb_variant xkb_rules xkb_switch_layout xkb_numlock xkb_file xkb_capslock xkb_model repeat_delay repeat_rate map_to_output map_to_region map_from_region tool_mode accel_profile dwt dwtp drag_lock drag click_method clickfinger_button_map middle_emulation tap events calibration_matrix natural_scroll left_handed pointer_accel scroll_button scroll_button_lock scroll_factor scroll_method tap_button_map contained skipwhite nextgroup=swayConfigInputOptVals,@i3ConfigValue
 syn keyword swayConfigInputOptVals absolute relative adaptive flat none button_areas clickfinger toggle two_finger edge on_button_down lrm lmr next prev pen eraser brush pencil airbrush disabled_on_external_mouse disable enable contained skipwhite nextgroup=swayConfigInputOpts,@i3ConfigValue,swayConfigDeviceOper
 syn match swayConfigDeviceOper /,/ contained nextgroup=swayConfigXkbOptsPair,swayConfigXkbLayout
 syn match swayConfigXkbLayout /[a-z]\+/ contained nextgroup=swayConfigDeviceOper
@@ -96,6 +106,8 @@ syn keyword swayConfigInputOpts xkb_layout contained skipwhite nextgroup=swayCon
 syn match swayConfigXkbOptsPairVal /[0-9a-z_-]\+/ contained contains=i3ConfigNumber skipwhite nextgroup=swayConfigDeviceOper,swayConfigInputOpts
 syn match swayConfigXkbOptsPair /[a-z]\+:/ contained contains=i3ConfigColonOperator nextgroup=swayConfigXkbOptsPairVal
 syn keyword swayConfigInputOpts xkb_options contained skipwhite nextgroup=swayConfigXkbOptsPair
+syn match swayConfigInputAngle /\(3[0-5][0-9]\|[1-2]\?[0-9]\{1,2\}\)\(\.[0-9]\+\)\?/ skipwhite nextgroup=swayConfigInputOpts
+syn keyword swayConfigInputOpts rotation_angle contained skipwhite nextgroup=swayConfigInputAngle
 
 syn region swayConfigInput start=/\s/ skip=/\\$/ end=/\ze[,;]\|$/ contained contains=swayConfigInputOpts,@i3ConfigValue keepend
 syn region swayConfigInput matchgroup=i3ConfigParen start=/ {$/ end=/^\s*}$/ contained contains=swayConfigInputOpts,@i3ConfigValue,i3ConfigComment keepend extend
@@ -118,16 +130,20 @@ syn match swayConfigSeatIdent /[^ ]\+/ contained contains=i3ConfigOutputIdent sk
 syn keyword i3ConfigKeyword seat contained skipwhite nextgroup=swayConfigSeatIdent
 
 " Output monitors
-syn keyword swayConfigOutputOpts mode resolution res modeline position pos scale scale_filter subpixel transform disable enable toggle power dpms max_render_time adaptive_sync render_bit_depth contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue,swayConfigOutputMode
-syn keyword swayConfigOutputOptVals linear nearest smart rgb bgr vrgb vbgr none clockwise anticlockwise toggle contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue
+syn keyword swayConfigOutputOpts mode resolution res modeline position pos scale scale_filter subpixel transform disable enable toggle power dpms max_render_time adaptive_sync render_bit_depth color_profile allow_tearing contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue,swayConfigOutputMode
+syn keyword swayConfigOutputOptVals linear nearest smart rgb bgr vrgb vbgr none toggle srgb contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue
 syn keyword swayConfigOutputBgVals solid_color fill stretch fit center tile contained skipwhite nextgroup=@i3ConfigColVar
-syn match swayConfigOutputBg /[#$]\S\+ solid_color/ contained contains=@i3ConfigColVar,swayConfigOutputBgVals
-syn match swayConfigOutputBg /[^b# '"]\S*/ contained contains=i3ConfigShOper skipwhite nextgroup=swayConfigOutputBgVals
+syn match swayConfigOutputBg /[#$]\S\+ solid_color/ contained contains=@i3ConfigColVar,swayConfigOutputBgVals skipwhite nextgroup=swayConfigOutputOpts
+syn match swayConfigOutputBg /[^b# '"]\S*/ contained skipwhite nextgroup=swayConfigOutputBgVals
 syn region swayConfigOutputBg start=/['"]/ end=/\ze/ contained contains=@i3ConfigIdent skipwhite nextgroup=swayConfigOutputBgVals
 syn keyword swayConfigOutputOpts bg background contained skipwhite nextgroup=swayConfigOutputBg
 syn match swayConfigOutputFPS /@[0-9.]\+Hz/ contained skipwhite nextgroup=swayConfigOutputOpts
 syn match swayConfigOutputMode /\(--custom \)\?[0-9]\+x[0-9]\+/ contained contains=i3ConfigShParam skipwhite nextgroup=swayConfigOutputFPS,swayConfigOutputOpts
-syn match swayConfigOutputOptVals /\(flipped-\)\?\(90\|180\|270\)\|flipped\|normal/ contained contains=i3ConfigNumber skipwhite nextgroup=swayConfigOutputOptsVals
+" clockwise and anticlockwise are relative -> only as bindings / user actions - not in config setup
+syn match swayConfigOutputOptVals /\(\(flipped-\)\?\(90\|180\|270\)\|flipped\|normal\)\( \(anti\)\?clockwise\)\?/ contained contains=i3ConfigNumber skipwhite nextgroup=swayConfigOutputOpts
+syn match swayConfigOutputICCPath /[^ '"]\+/ contained skipwhite nextgroup=swayConfigOutputOpts
+syn region swayConfigOutputICCPath start=/['"]/ end=/\ze/ contained contains=@i3ConfigIdent skipwhite nextgroup=swayConfigOutputOpts
+syn keyword swayConfigOutputOptVals icc contained skipwhite nextgroup=swayConfigOutputICCPath
 syn region swayConfigOutput start=/\s/ skip=/\\$/ end=/\ze[,;]\|$/ contained contains=swayConfigOutputOpts,@i3ConfigValue keepend
 syn region swayConfigOutput matchgroup=i3ConfigParen start=/ {$/ end=/^\s*}$/ contained contains=swayConfigOutputOpts,@i3ConfigValue,i3ConfigComment keepend extend
 syn match swayConfigOutputIdent /[^ ]\+/ contained contains=i3ConfigOutputIdent skipwhite nextgroup=swayConfigOutput
@@ -149,6 +165,7 @@ hi def link swayConfigInputType              i3ConfigMoveType
 hi def link swayConfigInputIdent             i3ConfigMoveDir
 hi def link swayConfigInputOptVals           i3ConfigShParam
 hi def link swayConfigInputOpts              i3ConfigOption
+hi def link swayConfigInputAngle             i3ConfigNumber
 hi def link swayConfigXkbOptsPairVal         i3ConfigParamLine
 hi def link swayConfigXkbOptsPair            i3ConfigShParam
 hi def link swayConfigXkbLayout              i3ConfigParamLine
@@ -156,6 +173,8 @@ hi def link swayConfigSeatOptVals            swayConfigInputOptVals
 hi def link swayConfigSeatOpts               swayConfigInputOpts
 hi def link swayConfigOutputOptVals          swayConfigInputOptVals
 hi def link swayConfigOutputBgVals           swayConfigInputOptVals
+hi def link swayConfigOutputBg               i3ConfigString
+hi def link swayConfigOutputICCPath          i3ConfigString
 hi def link swayConfigOutputOpts             swayConfigInputOpts
 hi def link swayConfigOutputFPS              Constant
 hi def link swayConfigOutputMode             i3ConfigNumber

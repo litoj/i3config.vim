@@ -100,6 +100,8 @@ mouse_warping none
 popup_during_fullscreen smart
 popup_during_fullscreen ignore
 popup_during_fullscreen leave_fullscreen
+# should be an error in sway, but working in i3 (v4.24+)
+popup_during_fullscreen all
 # 4.27
 focus_wrapping no
 focus_wrapping force
@@ -188,6 +190,7 @@ bindsym _ split vertical|horizontal|toggle, swap container with id|con_id|mark i
 xwayland force
 bindsym _ border toggle|none|normal|pixel|csd 4, focus tiling|floating,\
   inhibit_idle focus, inhibit_idle fullscreen, inhibit_idle open, inhibit_idle visible
+primary_selection disabled
 # ignoring: max_render_time off
 bindsym _ move container|window|workspace to output left,\
 	shortcuts_inhibitor enable|disable, split v|h|none|t, splitv|splith|splitt
@@ -227,6 +230,7 @@ bar {
 # sway-input
 input type:keyboard {
 	repeat_delay|repeat_rate 220 xkb_file $name xkb_layout us,de xkb_model xkb_rules
+	xkb_options x:y rotation_angle -90
 	xkb_switch_layout 3|next|prev xkb_variant xkb_capslock|xkb_numlock enabled|disabled
 }
 input type:!keyboard map_to_output $eDP-1 map_to_region $x $y $width $height map_from_region X1xY1 X2xY2
@@ -267,10 +271,12 @@ output * {
 	subpixel rgb|bgr|vrgb|vbgr|none
 	background "$(fd . ~/Pictures/screen/|shuf -n1)" stretch #666
 	bg #666 solid_color
-	transform 90|180|270|flipped|flipped-90|flipped-180|flipped-270|normal clockwise|anticlockwise
+	transform flipped-90|180|270|flipped|transform normal clockwise|anticlockwise
 	disable|enable|toggle
 	power|dpms on|off|toggle
 	max_render_time off|100
 	adaptive_sync on|off
 	render_bit_depth 8|10
+	allow_tearing on
+	color_profile srgb color_profile icc path/to/file
 }
