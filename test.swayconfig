@@ -100,7 +100,7 @@ mouse_warping none
 popup_during_fullscreen smart
 popup_during_fullscreen ignore
 popup_during_fullscreen leave_fullscreen
-# should be an error in sway, but working in i3 (v4.24+)
+# should be an ERROR in sway, but working in i3 (v4.24+)
 popup_during_fullscreen all
 # 4.27
 focus_wrapping no
@@ -192,7 +192,7 @@ bindsym _ border toggle|none|normal|pixel|csd 4, focus tiling|floating,\
   inhibit_idle focus, inhibit_idle fullscreen, inhibit_idle open, inhibit_idle visible
 primary_selection disabled
 # ignoring: max_render_time off
-bindsym _ move container|window|workspace to output left,\
+bindsym _ move container, move window, move workspace to output left,\
 	shortcuts_inhibitor enable|disable, split v|h|none|t, splitv|splith|splitt
 bindswitch --locked --no-warn --reload {
 	lid:on nop
@@ -211,8 +211,19 @@ hide_edge_borders --i3 none
 bindsym _ opacity set|plus|minus 1, urgent enable|disable|allow|deny
 tiling_drag_threshold 3
 bindsym _ workspace prev_on_output|next_on_output
+# sway exec block
+exec {
+	test --command=1
+}
 # sway-bar
-bar {
+bar hi $varname {
+	# shoud be an ERROR
+}
+bar $varname {
+	font xft:System San Francisco Display, FontAwesome 10
+}
+bar "hello there" {
+	font xft:System San Francisco Display, FontAwesome 10
 	swaybar_command
 	binding_mode_indicator yes|no
 	gaps 10 10 10 10
@@ -228,12 +239,14 @@ bar {
 	icon_theme 1
 }
 # sway-input
-input type:keyboard {
+input $var {
+}
+input type:!keyboard {
 	repeat_delay|repeat_rate 220 xkb_file $name xkb_layout us,de xkb_model xkb_rules
 	xkb_options x:y rotation_angle -90
 	xkb_switch_layout 3|next|prev xkb_variant xkb_capslock|xkb_numlock enabled|disabled
 }
-input type:!keyboard map_to_output $eDP-1 map_to_region $x $y $width $height map_from_region X1xY1 X2xY2
+input "name test" map_to_output $eDP-1 map_to_region $x $y $width $height map_from_region X1xY1 X2xY2
 input type:tablet_tool tool_mode pen|eraser|brush|pencil|airbrush|*
 input type:touchpad {
 	accel_profile adaptive|flat
@@ -248,9 +261,9 @@ input type:touchpad {
 	scroll_method none|two_finger|edge|on_button_down
 }
 # SEAT CONFIGURATION
-seat seat1 cursor move|set x y
+seat $var cursor move|set x y
 seat seat1 cursor press|release button1-9
-seat "name" {
+seat "name test" {
 	attach 'identifier'
 	fallback true|false
 	hide_cursor 5000|when-typing enable|disable
@@ -261,15 +274,17 @@ seat "name" {
 	xcursor_theme 'Cursortheme' 32
 }
 # sway-output
-output "Some Company ABC123 0x00000000" pos 1920 0 res 1920x1080
-output * {
+output $var {
+}
+output * pos 1920 0 res 1920x1080
+output "Some Company ABC123 0x00000000" {
 	mode|resolution|res --custom 1920x1080@60.001Hz
 	modeline 0...
 	position|pos $X $Y
 	scale 1
 	scale_filter linear|nearest|smart
 	subpixel rgb|bgr|vrgb|vbgr|none
-	background "$(fd . ~/Pictures/screen/|shuf -n1)" stretch #666
+	background "$(fd . ~/Pictures/screen/|shuf -n1)" stretch bg #666 solid_color
 	bg #666 solid_color
 	transform flipped-90|180|270|flipped|transform normal clockwise|anticlockwise
 	disable|enable|toggle
@@ -278,5 +293,5 @@ output * {
 	adaptive_sync on|off
 	render_bit_depth 8|10
 	allow_tearing on
-	color_profile srgb color_profile icc path/to/file
+	color_profile srgb color_profile icc "path/to /file" color_profile icc $var
 }
