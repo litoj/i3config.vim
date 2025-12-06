@@ -1,7 +1,8 @@
 " Vim syntax file
 " Language: i3 config file
 " Original Author: Josef Litos (litoj/i3config.vim)
-" Maintainer: Quentin Hibon (github user hiqua)
+" Maintainer: Josef Litos (litoj)
+" Previous maintainer: Quentin Hibon (github user hiqua)
 " Version: 1.2.7
 " Last Change: 2025-12-02
 
