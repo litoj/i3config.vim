@@ -3,7 +3,7 @@
 " Original Author: Josef Litos (litoj/i3config.vim)
 " Maintainer: James Eapen <james.eapen@vai.org>
 " Version: 1.2.8
-" Last Change: 2026-04-01
+" Last Change: 2026-05-28
 
 " References:
 " http://i3wm.org/docs/userguide.html#configuring
@@ -134,8 +134,12 @@ syn match swayConfigSeatIdent /[^ ,;]\+/ contained contains=@i3ConfigStrVar next
 syn keyword i3ConfigKeyword seat contained skipwhite nextgroup=swayConfigSeatIdent
 
 " Output monitors
-syn keyword swayConfigOutputOpts mode resolution res modeline position pos scale scale_filter subpixel transform disable enable toggle power dpms max_render_time adaptive_sync render_bit_depth color_profile allow_tearing hdr contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue,swayConfigOutputMode
-syn keyword swayConfigOutputOptVals linear nearest smart rgb bgr vrgb vbgr none toggle srgb contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue
+syn keyword swayConfigOutputOpts mode resolution res modeline position pos scale scale_filter subpixel transform disable enable toggle power dpms max_render_time adaptive_sync render_bit_depth allow_tearing hdr contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue,swayConfigOutputMode
+syn match swayConfigOutputICCPath /\S\+/ contained contains=@i3ConfigStrVar skipwhite nextgroup=swayConfigOutputOpts extend
+syn keyword swayConfigOutputCPVals icc contained skipwhite nextgroup=swayConfigOutputICCPath
+syn match swayConfigOutputCPVals /\( --device-primaries\)\? \(gamma22\|srgb\)/ contained contains=i3ConfigShParam skipwhite nextgroup=swayConfigOutputOpts
+syn keyword swayConfigOutputOpts color_profile contained skipwhite nextgroup=swayConfigOutputCPVals
+syn keyword swayConfigOutputOptVals linear nearest smart rgb bgr vrgb vbgr none toggle contained skipwhite nextgroup=swayConfigOutputOptVals,@i3ConfigValue
 syn keyword swayConfigOutputBgVals solid_color fill stretch fit center tile contained skipwhite nextgroup=@i3ConfigColVar
 syn match swayConfigOutputBg /[#$]\S\+ solid_color/ contained contains=@i3ConfigColVar,swayConfigOutputBgVals skipwhite nextgroup=swayConfigOutputOpts
 syn match swayConfigOutputBg /[^b# ,;][^ ,;]*/ contained contains=@i3ConfigStrVar skipwhite nextgroup=swayConfigOutputBgVals extend
@@ -144,8 +148,6 @@ syn match swayConfigOutputFPS /@[0-9.]\+Hz/ contained skipwhite nextgroup=swayCo
 syn match swayConfigOutputMode /\(--custom \)\?[0-9]\+x[0-9]\+/ contained contains=i3ConfigShParam skipwhite nextgroup=swayConfigOutputFPS,swayConfigOutputOpts
 " clockwise and anticlockwise are relative -> only as bindings / user actions - not in config setup
 syn match swayConfigOutputOptVals /\(\(flipped-\)\?\(90\|180\|270\)\|flipped\|normal\)\( \(anti\)\?clockwise\)\?/ contained contains=i3ConfigNumber skipwhite nextgroup=swayConfigOutputOpts
-syn match swayConfigOutputICCPath /\S\+/ contained contains=@i3ConfigStrVar skipwhite nextgroup=swayConfigOutputOpts extend
-syn keyword swayConfigOutputOptVals icc contained skipwhite nextgroup=swayConfigOutputICCPath
 syn region swayConfigOutput start=/\s/ skip=/\\$/ end=/\ze[,;]\|$/ contained contains=swayConfigOutputOpts,@i3ConfigValue keepend
 syn region swayConfigOutput matchgroup=i3ConfigParen start=/ {$/ end=/^\s*}$/ contained contains=swayConfigOutputOpts,@i3ConfigValue,i3ConfigComment keepend
 syn match swayConfigOutputIdent /[^ ,;]\+/ contained contains=@i3ConfigIdent skipwhite nextgroup=swayConfigOutput extend
@@ -177,9 +179,10 @@ hi def link swayConfigSeatOptVals            swayConfigInputOptVals
 hi def link swayConfigSeatOpts               swayConfigInputOpts
 hi def link swayConfigSeatIdent              i3ConfigIdent
 hi def link swayConfigOutputOptVals          swayConfigInputOptVals
+hi def link swayConfigOutputICCPath          i3ConfigString
+hi def link swayConfigOutputCPVals           swayConfigOutputOptVals
 hi def link swayConfigOutputBgVals           swayConfigInputOptVals
 hi def link swayConfigOutputBg               i3ConfigString
-hi def link swayConfigOutputICCPath          i3ConfigString
 hi def link swayConfigOutputOpts             swayConfigInputOpts
 hi def link swayConfigOutputFPS              Constant
 hi def link swayConfigOutputMode             i3ConfigNumber
